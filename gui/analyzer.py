@@ -46,19 +46,20 @@ class LogicAnalyzer():
     
     def __init__(self):
 	# init some variables
-	path=os.path.join( os.path.dirname( os.path.realpath ( __file__ ) ), 'tools' ) # path to tools
+	self.path=os.path.join( os.path.dirname( os.path.realpath ( __file__ ) ), 'tools' ) # path to tools
 
 	if hasattr(sys,"frozen") and sys.frozen in ["windows_exe", "console_exe"]:
-	    path=os.path.join(os.path.dirname(sys.executable), 'tools')
+	    self.path=os.path.join(os.path.dirname(sys.executable), 'tools')
 
-	programmer = os.path.join(path, 'avs3a')
-	port = '/dev/ttyACM0' # default port, gets overwritten by port chooser
+	path = self.path
+	self.programmer = os.path.join(path, 'astriaekipro')
+	self.port = '/dev/ttyACM0' # default port, gets overwritten by port chooser
 
 	if sys.platform == 'win32':
-    	    programmer = os.path.join(path, 'avprog', 'AvProg.exe')
-	    port = 'COM1' # default port, gets overwritten by port chooser
+    	    self.programmer = os.path.join(path, 'avprog', 'AvProg.exe')
+	    self.port = 'COM1' # default port, gets overwritten by port chooser
 
-        bit_file = os.path.join(path, 'analyzer.bit')
+        self.bit_file = os.path.join(path, 'analyzer.bit')
 
         self.glade=gtk.glade.XML('analyzer.glade')
         glade = self.glade
@@ -318,14 +319,15 @@ class LogicAnalyzer():
         if type(self.area.port) is serial.Serial:
             elapsed = int(time.time() - self.start_time)
 
-        try:
-            self.status.pop(self.area.mycontextid) # clear status bar
-        except:
-            pass
+    	    try:
+        	self.status.pop(self.area.mycontextid) # clear status bar
+    	    except:
+        	pass
             
-        self.status.push(self.status.mycontextid, "%s %s %s" % ("Recorded for", elapsed, "seconds"))
-        print "update status"
-        return type(self.area.port) is serial.Serial
+    	    self.status.push(self.status.mycontextid, "%s %s %s" % ("Recorded for", elapsed, "seconds"))
+    	    print "update status"
+    	    return type(self.area.port) is serial.Serial
+    	return False
 
 if __name__=='__main__':
     analyzer = LogicAnalyzer()
